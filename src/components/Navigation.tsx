@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Dumbbell } from 'lucide-react';
+import { Menu, X, Dumbbell, LogOut, Shield } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { customer, logout, isAdmin } = useAuth();
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -25,7 +27,20 @@ const Navigation: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 text-white hover:text-blue-400 transition-colors">
             <Dumbbell className="h-8 w-8 text-blue-400" />
-            <span className="font-bold text-xl">PrimeFit Studio</span>
+            <div>
+              <span className="font-bold text-xl">PrimeFit Studio</span>
+              {customer && (
+                <div className="text-sm text-gray-300 flex items-center gap-2">
+                  Welcome, {customer.name}
+                  {isAdmin && (
+                    <span className="bg-yellow-500 text-black px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">
+                      <Shield className="h-3 w-3" />
+                      ADMIN
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -44,6 +59,15 @@ const Navigation: React.FC = () => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Logout Button */}
+              <button
+                onClick={logout}
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-red-400 hover:bg-red-600 hover:text-white transition-colors"
+              >
+                <LogOut className="h-4 w-4 mr-1" />
+                Logout
+              </button>
             </div>
           </div>
 
@@ -80,6 +104,18 @@ const Navigation: React.FC = () => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Mobile Logout Button */}
+              <button
+                onClick={() => {
+                  logout();
+                  setIsMenuOpen(false);
+                }}
+                className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-600 hover:text-white transition-colors"
+              >
+                <LogOut className="h-4 w-4 mr-2 inline" />
+                Logout
+              </button>
             </div>
           </div>
         )}

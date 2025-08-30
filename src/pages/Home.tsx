@@ -1,7 +1,11 @@
 import React from 'react';
 import { Clock, Users, Award, MapPin, Phone, Mail } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import PerformanceDashboard from '../components/PerformanceDashboard';
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
+
   const facilities = [
     { name: 'Cardio Zone', icon: '🏃‍♂️', description: 'State-of-the-art treadmills, bikes, and ellipticals' },
     { name: 'Weight Training', icon: '💪', description: 'Complete free weights and machine equipment' },
@@ -26,6 +30,11 @@ const Home: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-900">
+      {/* Performance Dashboard */}
+      <div className="container mx-auto px-4 py-6">
+        <PerformanceDashboard />
+      </div>
+
       {/* Hero Section */}
       <section 
         className="relative h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
@@ -44,7 +53,10 @@ const Home: React.FC = () => {
             <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors transform hover:scale-105">
               Start Your Journey
             </button>
-            <button className="border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
+            <button 
+              onClick={() => navigate('/membership')}
+              className="border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105"
+            >
               View Membership
             </button>
           </div>
@@ -57,9 +69,12 @@ const Home: React.FC = () => {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-6">About PrimeFit Studio</h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              At PrimeFit Studio, we believe fitness is more than just working out – it's a lifestyle transformation. 
-              Our state-of-the-art facility, expert trainers, and supportive community create the perfect environment 
-              for achieving your fitness goals.
+              PrimeFit Studio is the first-of-its-kind gym in Huvina Hadagali, built on the values of respect, inclusivity, and community support. We welcome youth, adults, men, and women alike, 
+              helping each individual work towards a healthier body and mind. With the right mix of local guidance, encouragement, and simple technology, we aim to bring modern fitness within the reach of our town.
+              <br />
+              <br />
+              At PrimeFit Studio, we believe fitness is more than just working out – it’s a journey of lifestyle transformation. Our welcoming space and supportive environment make it easier for
+              everyone to stay motivated and consistent in their fitness journey.
             </p>
           </div>
           
@@ -163,6 +178,20 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Performance Dashboard Section */}
+      <section className="py-20 bg-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-6">Performance Dashboard</h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Track your progress and stay motivated
+            </p>
+          </div>
+          
+          <PerformanceDashboard />
+        </div>
+      </section>
+
       {/* Contact Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-red-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -170,15 +199,15 @@ const Home: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
             <div className="flex items-center text-white">
               <Phone className="h-5 w-5 mr-2" />
-              <span>+91 98765 43210</span>
+              <span>+91 7975832709</span>
             </div>
             <div className="flex items-center text-white">
               <Mail className="h-5 w-5 mr-2" />
-              <span>info@primefitstudio.com</span>
+              <span>primefitstudio@gmail.com</span>
             </div>
             <div className="flex items-center text-white">
               <MapPin className="h-5 w-5 mr-2" />
-              <span>123 Fitness Street, Mumbai</span>
+              <span>Hp Halli Road, Huvina Hadagali</span>
             </div>
           </div>
         </div>

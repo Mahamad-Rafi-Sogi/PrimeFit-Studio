@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Users, Trophy, Camera } from 'lucide-react';
+import { Play, Users, Trophy, Camera, Star } from 'lucide-react';
 
 const Gallery: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('gym');
