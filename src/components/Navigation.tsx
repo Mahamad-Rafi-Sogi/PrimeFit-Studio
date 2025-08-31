@@ -15,7 +15,8 @@ const Navigation: React.FC = () => {
     { name: 'Membership', path: '/membership' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Notifications', path: '/notifications' },
-    { name: 'BMI Calculator', path: '/bmi' }
+    { name: 'BMI Calculator', path: '/bmi' },
+    ...(isAdmin ? [{ name: 'Admin Dashboard', path: '/admin' }] : [])
   ];
 
   const isActive = (path: string) => location.pathname === path;

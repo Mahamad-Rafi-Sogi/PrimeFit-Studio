@@ -10,6 +10,7 @@ import Membership from './pages/Membership';
 import Gallery from './pages/Gallery';
 import Notifications from './pages/Notifications';
 import BMICalculator from './pages/BMICalculator';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/bmi" element={<BMICalculator />} />
+              <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </ProtectedRoute>
         </div>

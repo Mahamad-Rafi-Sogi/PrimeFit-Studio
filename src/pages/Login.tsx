@@ -175,17 +175,6 @@ const Login: React.FC = () => {
               )}
             </button>
           </form>
-
-          {/* Demo Numbers */}
-          <div className="mt-6 p-4 bg-slate-700 rounded-lg">
-            <h4 className="text-sm font-semibold text-white mb-2">Demo Numbers (for testing):</h4>
-            <div className="grid grid-cols-2 gap-2 text-xs text-gray-300">
-              <div>9876543210 - Ravi Kumar</div>
-              <div>8765432109 - Priya Sharma</div>
-              <div>7654321098 - Arjun Reddy</div>
-              <div>6543210987 - Sneha Patel</div>
-            </div>
-          </div>
         </div>
 
         {/* Contact Info */}

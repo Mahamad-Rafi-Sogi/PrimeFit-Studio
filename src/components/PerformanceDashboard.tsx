@@ -4,15 +4,16 @@ import { useAuth } from '../contexts/AuthContext';
 const PerformanceDashboard: React.FC = () => {
   const { customerStats, loginAttempts, lastLoginTime, isAdmin } = useAuth();
 
-  // Only show performance dashboard to admin users
+  // Strict admin-only access - return null immediately for non-admin users
   if (!isAdmin) {
     return null;
   }
 
+  // Admin-only loading state
   if (!customerStats) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">🔧 Admin Dashboard - Loading...</h3>
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-md p-6 mb-6">
+        <h3 className="text-lg font-semibold text-white mb-4">🔧 Admin Dashboard - Loading...</h3>
       </div>
     );
   }
