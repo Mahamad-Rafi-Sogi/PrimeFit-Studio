@@ -63,16 +63,6 @@ const Membership: React.FC = () => {
                   </div>
                 ))}
               </div>
-
-              <button 
-                className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
-                  plan.popular 
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white' 
-                    : 'bg-slate-700 hover:bg-slate-600 text-white'
-                }`}
-              >
-                Choose {plan.name}
-              </button>
             </div>
           ))}
         </div>
@@ -83,15 +73,15 @@ const Membership: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-6 text-white">
             <div className="bg-white/20 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Student Discount</h3>
-              <p className="text-sm">20% off on all plans with valid student ID</p>
+              <p className="text-sm">10% off on all plans with valid student ID</p>
             </div>
             <div className="bg-white/20 rounded-lg p-4">
               <h3 className="font-semibold mb-2">Couple's Package</h3>
-              <p className="text-sm">Join with a partner and get 25% off each plan</p>
+              <p className="text-sm">Join with a partner and get 10% off each plan</p>
             </div>
             <div className="bg-white/20 rounded-lg p-4">
-              <h3 className="font-semibold mb-2">Corporate Wellness</h3>
-              <p className="text-sm">Special rates for corporate groups of 10+</p>
+              <h3 className="font-semibold mb-2">Team Discount</h3>
+              <p className="text-sm">Groups of 10+ members get 10% off each plan</p>
             </div>
           </div>
         </div>
@@ -105,22 +95,22 @@ const Membership: React.FC = () => {
             <div className="flex flex-col items-center p-4 bg-slate-700/50 rounded-lg hover:bg-slate-600/50 transition-colors">
               <Phone className="h-8 w-8 text-blue-400 mb-3" />
               <h3 className="font-semibold text-white mb-1">Call Us</h3>
-              <p className="text-gray-400">+91 98765 43210</p>
-              <p className="text-gray-400">+91 87654 32109</p>
+              <p className="text-gray-400">+91 7760570036</p>
+              <p className="text-gray-400">+91 7975832709</p>
             </div>
             
             <div className="flex flex-col items-center p-4 bg-slate-700/50 rounded-lg hover:bg-slate-600/50 transition-colors">
               <Mail className="h-8 w-8 text-green-400 mb-3" />
               <h3 className="font-semibold text-white mb-1">Email Us</h3>
-              <p className="text-gray-400">info@primefitstudio.com</p>
-              <p className="text-gray-400">membership@primefitstudio.com</p>
+              <p className="text-gray-400">primefitstudio@gmail.com</p>
+              <p className="text-gray-400">primefitstudioinfo@gmail.com</p>
             </div>
             
             <div className="flex flex-col items-center p-4 bg-slate-700/50 rounded-lg hover:bg-slate-600/50 transition-colors">
               <MapPin className="h-8 w-8 text-red-400 mb-3" />
               <h3 className="font-semibold text-white mb-1">Visit Us</h3>
-              <p className="text-gray-400">123 Fitness Street</p>
-              <p className="text-gray-400">Mumbai, Maharashtra 400001</p>
+              <p className="text-gray-400">PrimeFit Studio </p>
+              <p className="text-gray-400">Hp Halli Road, Huvina Hadgali 583219</p>
             </div>
           </div>
 

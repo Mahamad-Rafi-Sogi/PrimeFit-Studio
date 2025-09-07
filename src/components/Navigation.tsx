@@ -19,6 +19,40 @@ const Navigation: React.FC = () => {
     ...(isAdmin ? [{ name: 'Admin Dashboard', path: '/admin' }] : [])
   ];
 
+  const scrollToDeveloper = () => {
+    // First navigate to home page if not already there
+    if (location.pathname !== '/') {
+      window.location.href = '/#developer';
+      return;
+    }
+    
+    // Scroll to developer section
+    const developerSection = document.getElementById('developer-section');
+    if (developerSection) {
+      developerSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start' 
+      });
+    }
+  };
+
+  const scrollToPayment = () => {
+    // First navigate to home page if not already there
+    if (location.pathname !== '/') {
+      window.location.href = '/#payment';
+      return;
+    }
+    
+    // Scroll to payment section
+    const paymentSection = document.getElementById('payment-section');
+    if (paymentSection) {
+      paymentSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start' 
+      });
+    }
+  };
+
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -26,15 +60,15 @@ const Navigation: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 text-white hover:text-blue-400 transition-colors">
-            <Dumbbell className="h-8 w-8 text-blue-400" />
-            <div>
-              <span className="font-bold text-xl">PrimeFit Studio</span>
+          <Link to="/" className="flex items-center space-x-2 text-white hover:text-blue-400 transition-colors flex-shrink-0 min-w-0">
+            <Dumbbell className="h-8 w-8 text-blue-400 flex-shrink-0" />
+            <div className="min-w-0">
+              <span className="font-bold text-lg sm:text-xl whitespace-nowrap">PrimeFit Studio</span>
               {customer && (
-                <div className="text-sm text-gray-300 flex items-center gap-2">
-                  Welcome, {customer.name}
+                <div className="text-xs sm:text-sm text-gray-300 flex items-center gap-2">
+                  <span className="truncate">Welcome, {customer.name}</span>
                   {isAdmin && (
-                    <span className="bg-yellow-500 text-black px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">
+                    <span className="bg-yellow-500 text-black px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1 flex-shrink-0">
                       <Shield className="h-3 w-3" />
                       ADMIN
                     </span>
@@ -45,7 +79,7 @@ const Navigation: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block flex-shrink-0">
             <div className="ml-10 flex items-baseline space-x-4">
               {navItems.map((item) => (
                 <Link
@@ -61,6 +95,22 @@ const Navigation: React.FC = () => {
                 </Link>
               ))}
               
+              {/* Payment Button */}
+              <button
+                onClick={scrollToPayment}
+                className="px-3 py-2 rounded-md text-sm font-medium bg-green-600 hover:bg-green-700 text-white transition-colors flex items-center"
+              >
+                💳 Payment
+              </button>
+              
+              {/* Developer Info Button */}
+              <button
+                onClick={scrollToDeveloper}
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                Developer Info
+              </button>
+              
               {/* Logout Button */}
               <button
                 onClick={logout}
@@ -73,7 +123,7 @@ const Navigation: React.FC = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-400 hover:text-white hover:bg-slate-700 p-2 rounded-md transition-colors"
@@ -89,7 +139,7 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-slate-800 rounded-lg mt-2">
               {navItems.map((item) => (
                 <Link
@@ -105,6 +155,28 @@ const Navigation: React.FC = () => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Mobile Payment Button */}
+              <button
+                onClick={() => {
+                  scrollToPayment();
+                  setIsMenuOpen(false);
+                }}
+                className="w-full text-left block px-3 py-2 rounded-md text-base font-medium bg-green-600 hover:bg-green-700 text-white transition-colors"
+              >
+                💳 Payment
+              </button>
+              
+              {/* Mobile Developer Info Button */}
+              <button
+                onClick={() => {
+                  scrollToDeveloper();
+                  setIsMenuOpen(false);
+                }}
+                className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                Developer Info
+              </button>
               
               {/* Mobile Logout Button */}
               <button

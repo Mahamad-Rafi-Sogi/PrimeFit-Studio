@@ -168,9 +168,15 @@ const BMICalculator: React.FC = () => {
             </div>
 
             <div className="mt-6 text-center">
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
-                Book Body Assessment
-              </button>
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6">
+                <h3 className="text-white font-semibold text-lg mb-3">🥗 Want Personalized Diet Plans?</h3>
+                <p className="text-gray-200 text-sm mb-4">
+                  Get customized diet plans for weight gain, weight loss, or maintenance based on your BMI results.
+                </p>
+                <div className="space-y-2">
+                  <p className="text-white font-medium">📞 Contact Admin for More Diet Plans</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

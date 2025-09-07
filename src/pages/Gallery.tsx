@@ -111,7 +111,7 @@ const Gallery: React.FC = () => {
               <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Trophy className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">500+</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">TBA</h3>
               <p className="text-gray-400">Success Stories</p>
             </div>
             
@@ -119,7 +119,7 @@ const Gallery: React.FC = () => {
               <div className="bg-blue-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">1000+</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">TBA</h3>
               <p className="text-gray-400">Happy Members</p>
             </div>
             
@@ -127,7 +127,7 @@ const Gallery: React.FC = () => {
               <div className="bg-red-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Star className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">4.9★</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">TBA</h3>
               <p className="text-gray-400">Average Rating</p>
             </div>
           </div>

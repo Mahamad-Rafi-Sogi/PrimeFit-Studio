@@ -29,23 +29,23 @@ const PerformanceDashboard: React.FC = () => {
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-          <div className="text-2xl font-bold text-white">{customerStats.total}</div>
+          <div className="text-2xl font-bold text-white">{customerStats.total || 0}</div>
           <div className="text-sm text-white/80">Total Customers</div>
         </div>
         
         <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-          <div className="text-2xl font-bold text-white">{customerStats.active}</div>
+          <div className="text-2xl font-bold text-white">{customerStats.active || 0}</div>
           <div className="text-sm text-white/80">Active Members</div>
         </div>
         
         <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-          <div className="text-2xl font-bold text-white">{loginAttempts}</div>
+          <div className="text-2xl font-bold text-white">{loginAttempts || 0}</div>
           <div className="text-sm text-white/80">Login Attempts</div>
         </div>
         
         <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
           <div className="text-2xl font-bold text-white">
-            {customerStats.inactive}
+            {customerStats.inactive || 0}
           </div>
           <div className="text-sm text-white/80">Inactive</div>
         </div>
@@ -54,12 +54,16 @@ const PerformanceDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
           <h4 className="font-semibold text-white mb-2">Membership Breakdown</h4>
-          {Object.entries(customerStats.membershipBreakdown).map(([type, count]) => (
-            <div key={type} className="flex justify-between items-center py-1">
-              <span className="text-white/80">{type}</span>
-              <span className="font-semibold text-white">{count}</span>
-            </div>
-          ))}
+          {customerStats.byMembership && typeof customerStats.byMembership === 'object' ? 
+            Object.entries(customerStats.byMembership).map(([type, count]) => (
+              <div key={type} className="flex justify-between items-center py-1">
+                <span className="text-white/80">{type}</span>
+                <span className="font-semibold text-white">{count as number}</span>
+              </div>
+            )) : (
+              <div className="text-white/60 text-sm">No membership data available</div>
+            )
+          }
         </div>
 
         {lastLoginTime && (

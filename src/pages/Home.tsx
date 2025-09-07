@@ -1,31 +1,36 @@
-import React from 'react';
-import { Clock, Users, Award, MapPin, Phone, Mail } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, Users, Award, MapPin, Phone, Mail, X, ArrowRight, CheckCircle, Code, Github, Linkedin, Instagram, Star, Heart, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PerformanceDashboard from '../components/PerformanceDashboard';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const [showJourneyModal, setShowJourneyModal] = useState(false);
+
+  const handleStartJourney = () => {
+    setShowJourneyModal(true);
+  };
 
   const facilities = [
-    { name: 'Cardio Zone', icon: '🏃‍♂️', description: 'State-of-the-art treadmills, bikes, and ellipticals' },
-    { name: 'Weight Training', icon: '💪', description: 'Complete free weights and machine equipment' },
-    { name: 'Group Classes', icon: '👥', description: 'Zumba, Yoga, CrossFit, and more' },
-    { name: 'Personal Training', icon: '🎯', description: 'One-on-one sessions with certified trainers' },
-    { name: 'Steam Room', icon: '🧖‍♀️', description: 'Relax and recover in our premium steam facilities' },
-    { name: 'Nutrition Bar', icon: '🥤', description: 'Fresh protein shakes and healthy snacks' }
+    { name: 'Cardio Zone', icon: '🏃‍♂️', description: 'State-of-the-art treadmills, bikes, and ellipticals', comingSoon: true },
+    { name: 'Weight Training', icon: '💪', description: 'Complete free weights and machine equipment', comingSoon: false },
+    { name: 'Group Classes', icon: '👥', description: 'Zumba, Yoga, CrossFit, and more', comingSoon: true },
+    { name: 'Personal Training', icon: '🎯', description: 'One-on-one sessions with certified trainers', comingSoon: true },
+    { name: 'Steam Room', icon: '🧖‍♀️', description: 'Relax and recover in our premium steam facilities', comingSoon: true },
+    { name: 'Nutrition Bar', icon: '🥤', description: 'Fresh protein shakes and healthy snacks', comingSoon: true }
   ];
 
   const trainers = [
-    { name: 'Alex Rodriguez', specialty: 'Strength Training', experience: '8 years', image: 'https://images.pexels.com/photos/1552106/pexels-photo-1552106.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { name: 'Sarah Johnson', specialty: 'Yoga & Flexibility', experience: '6 years', image: 'https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { name: 'Mike Chen', specialty: 'HIIT & Cardio', experience: '5 years', image: 'https://images.pexels.com/photos/1431282/pexels-photo-1431282.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    { name: 'Emma Davis', specialty: 'Nutrition Coaching', experience: '7 years', image: 'https://images.pexels.com/photos/3768997/pexels-photo-3768997.jpeg?auto=compress&cs=tinysrgb&w=400' }
+    { name: 'Shabbir Basha', specialty: 'Strength Training', experience: '8 years', image: 'https://images.pexels.com/photos/1552106/pexels-photo-1552106.jpeg?auto=compress&cs=tinysrgb&w=400' },
+    { name: 'Coming Soon', specialty: 'Yoga & Flexibility', experience: 'TBA', image: 'https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg?auto=compress&cs=tinysrgb&w=400' },
+    { name: 'Coming Soon', specialty: 'HIIT & Cardio', experience: 'TBA', image: 'https://images.pexels.com/photos/1431282/pexels-photo-1431282.jpeg?auto=compress&cs=tinysrgb&w=400' },
+    { name: 'Shabbir Basha', specialty: 'Nutrition Coaching', experience: '8 years', image: 'https://images.pexels.com/photos/3768997/pexels-photo-3768997.jpeg?auto=compress&cs=tinysrgb&w=400' }
   ];
 
   const timings = [
     { day: 'Monday - Friday', time: '5:00 AM - 11:00 PM' },
     { day: 'Saturday', time: '6:00 AM - 10:00 PM' },
-    { day: 'Sunday', time: '7:00 AM - 9:00 PM' }
+    { day: 'Sunday', time: 'Closed for Rest' }
   ];
 
   return (
@@ -50,7 +55,10 @@ const Home: React.FC = () => {
             Where Fitness Meets Lifestyle
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors transform hover:scale-105">
+            <button 
+              onClick={handleStartJourney}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors transform hover:scale-105"
+            >
               Start Your Journey
             </button>
             <button 
@@ -59,6 +67,62 @@ const Home: React.FC = () => {
             >
               View Membership
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Community Appreciation Section */}
+      <section className="py-16 bg-gradient-to-r from-purple-600 to-blue-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="mb-8">
+            <Heart className="h-12 w-12 text-white mx-auto mb-4" />
+            <h2 className="text-3xl font-bold text-white mb-4">Thank You for Being Part of Our Community!</h2>
+            <p className="text-xl text-gray-100 leading-relaxed">
+              We are glad to have you in our PrimeFit Studio community. Your fitness journey matters to us, 
+              and together we're building something amazing in Huvina Hadagali.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Rate App */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-all">
+              <Star className="h-8 w-8 text-yellow-400 mx-auto mb-3" />
+              <h3 className="text-xl font-semibold text-white mb-3">Rate Our App</h3>
+              <p className="text-gray-200 text-sm mb-4">
+                Love our app? Help others discover PrimeFit Studio by rating us on the Play Store!
+              </p>
+              <a 
+                href="https://play.google.com/store/apps/details?id=com.primefitstudio.app" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-block bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+              >
+                ⭐ Rate on Play Store
+              </a>
+            </div>
+
+            {/* Follow Instagram */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-all">
+              <Instagram className="h-8 w-8 text-pink-400 mx-auto mb-3" />
+              <h3 className="text-xl font-semibold text-white mb-3">Follow Us on Instagram</h3>
+              <p className="text-gray-200 text-sm mb-4">
+                Stay updated with our latest workouts, success stories, and fitness tips!
+              </p>
+              <a 
+                href="https://instagram.com/primefitstudio_huvina_hadagali" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+              >
+                📸 Follow on Instagram
+              </a>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <p className="text-gray-200 text-sm">
+              Your support means the world to us! 💪
+            </p>
           </div>
         </div>
       </section>
@@ -83,8 +147,8 @@ const Home: React.FC = () => {
               <div className="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-700 transition-colors">
                 <Award className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Certified Trainers</h3>
-              <p className="text-gray-400">Expert guidance from certified fitness professionals</p>
+              <h3 className="text-xl font-semibold text-white mb-2">Trainer</h3>
+              <p className="text-gray-400">guidance from fitness Trainer</p>
             </div>
             
             <div className="text-center group">
@@ -129,9 +193,9 @@ const Home: React.FC = () => {
       <section className="py-20 bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-6">Meet Our Expert Trainers</h2>
+            <h2 className="text-4xl font-bold text-white mb-6">Meet Our Trainers</h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Our certified professionals are here to guide you every step of the way
+              Our Trainer is here to guide you every step of the way
             </p>
           </div>
           
@@ -168,12 +232,62 @@ const Home: React.FC = () => {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {facilities.map((facility, index) => (
-              <div key={index} className="bg-slate-800 p-6 rounded-xl hover:bg-slate-700 transition-colors group">
+              <div key={index} className="relative bg-slate-800 p-6 rounded-xl hover:bg-slate-700 transition-colors group">
                 <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{facility.icon}</div>
                 <h3 className="text-xl font-semibold text-white mb-3">{facility.name}</h3>
                 <p className="text-gray-400">{facility.description}</p>
+                
+                {/* Coming Soon Tooltip */}
+                {facility.comingSoon && (
+                  <div className="absolute inset-0 bg-slate-900/95 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="text-center">
+                      <div className="text-3xl mb-2">🚧</div>
+                      <div className="text-yellow-400 font-bold text-lg mb-1">Coming Soon</div>
+                      <div className="text-gray-300 text-sm">This facility will be available soon</div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Payment Section */}
+      <section id="payment-section" className="py-16 bg-slate-800">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-xl p-8">
+            <div className="mb-6">
+              <CreditCard className="h-12 w-12 text-white mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-white mb-4">Quick & Easy Payments</h2>
+              <p className="text-gray-100 text-lg">
+                Pay your membership fees instantly using UPI. Quick, secure, and hassle-free!
+              </p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6">
+              <h3 className="text-xl font-semibold text-white mb-4">Pay with UPI</h3>
+              <div className="flex justify-center">
+                <a 
+                  href="upi://pay?pa=primefitstudio@paytm&pn=PrimeFit%20Studio&mc=7299&tr=PRIMEFIT001&tn=Membership%20Payment%20-%20PrimeFit%20Studio&am=&cu=INR"
+                  className="bg-white hover:bg-gray-100 text-green-600 px-8 py-4 rounded-lg font-semibold transition-colors flex items-center text-lg"
+                >
+                  💳 Pay Now with UPI
+                </a>
+              </div>
+            </div>
+
+            <div className="text-white text-sm space-y-2">
+              <p>✅ Secure payments through your UPI app</p>
+              <p>✅ Instant payment confirmation</p>
+              <p>✅ No additional charges</p>
+              <p className="text-gray-200 mt-4">
+                <strong>Note:</strong> After payment, please share the transaction screenshot with us on WhatsApp: 
+                <a href="https://wa.me/917975832709" className="text-yellow-300 hover:text-yellow-200 ml-1">
+                  +91 7975832709
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -195,9 +309,199 @@ const Home: React.FC = () => {
               <MapPin className="h-5 w-5 mr-2" />
               <span>Hp Halli Road, Huvina Hadagali</span>
             </div>
+            <a 
+              href="https://instagram.com/primefitstudio_huvina_hadagali" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center text-white hover:text-pink-200 transition-colors group"
+            >
+              <Instagram className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+              <span>@primefitstudio_huvina_hadagali</span>
+            </a>
           </div>
         </div>
       </section>
+
+      {/* Developer Section */}
+      <section id="developer-section" className="py-12 bg-slate-800 border-t border-slate-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <Code className="h-6 w-6 text-blue-400 mr-2" />
+              <h3 className="text-lg font-semibold text-white">Developed By</h3>
+            </div>
+            
+            <div className="bg-slate-700 rounded-xl p-6 max-w-md mx-auto">
+              <div className="text-center">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white font-bold text-xl">MR</span>
+                </div>
+                
+                <h4 className="text-xl font-bold text-white mb-2">Mahamad Rafi Sogi</h4>
+                <p className="text-blue-400 font-medium mb-1">Full Stack Developer</p>
+                <p className="text-gray-400 text-sm mb-4">React • TypeScript • Modern Web Technologies</p>
+                
+                <div className="flex justify-center space-x-4">
+                  <a 
+                    href="https://github.com/Mahamad-Rafi-Sogi" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-lg transition-colors group"
+                    title="GitHub Profile"
+                  >
+                    <Github className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                  </a>
+                  
+                  <a 
+                    href="https://www.linkedin.com/in/mdrafisogi/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg transition-colors group"
+                    title="LinkedIn Profile"
+                  >
+                    <Linkedin className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                  </a>
+                  
+                  <a 
+                    href="https://www.instagram.com/al_buraq_whitebeast/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-3 rounded-lg transition-colors group"
+                    title="Instagram Profile"
+                  >
+                    <Instagram className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                  </a>
+                  
+                  <a 
+                    href="mailto:mrafisogi.dev@gmail.com"
+                    className="bg-red-600 hover:bg-red-700 text-white p-3 rounded-lg transition-colors group"
+                    title="Email Developer"
+                  >
+                    <Mail className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                  </a>
+                </div>
+                
+                <div className="mt-4 text-xs text-gray-500">
+                  © 2025 • Built with React & TypeScript
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Start Your Journey Modal */}
+      {showJourneyModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+          <div className="bg-slate-800 rounded-xl p-8 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setShowJourneyModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            <div className="text-center mb-8">
+              <div className="bg-gradient-to-r from-blue-600 to-red-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <ArrowRight className="h-10 w-10 text-white" />
+              </div>
+              
+              <h2 className="text-3xl font-bold text-white mb-4">Welcome to Your Fitness Journey!</h2>
+              <p className="text-gray-300 text-lg">
+                Ready to transform your life? Here's how to get started at PrimeFit Studio.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              {/* Step 1 */}
+              <div className="flex items-start space-x-4">
+                <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">
+                  1
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Choose Your Membership</h3>
+                  <p className="text-gray-300 mb-3">
+                    Select from our flexible membership plans that suit your lifestyle and fitness goals.
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setShowJourneyModal(false);
+                      navigate('/membership');
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    View Membership Plans
+                  </button>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex items-start space-x-4">
+                <div className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">
+                  2
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Visit Our Facility</h3>
+                  <p className="text-gray-300 mb-3">
+                    Come check out our modern equipment and meet our friendly team. We're located at Hp Halli Road, Huvina Hadagali.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <a 
+                      href="tel:+917975832709"
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center"
+                    >
+                      Call Us: +91 7975832709
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex items-start space-x-4">
+                <div className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">
+                  3
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Start Training</h3>
+                  <p className="text-gray-300 mb-3">
+                    Begin your fitness journey with our expert guidance and supportive community.
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="flex items-center text-green-400">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      <span>Weight Training Available</span>
+                    </div>
+                    <div className="flex items-center text-yellow-400">
+                      <Clock className="h-4 w-4 mr-2" />
+                      <span>More Facilities Coming Soon</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 p-4 bg-slate-700 rounded-lg">
+              <h4 className="text-white font-semibold mb-2">Why Choose PrimeFit Studio?</h4>
+              <ul className="text-gray-300 text-sm space-y-1">
+                <li>• First modern gym in Huvina Hadagali</li>
+                <li>• Welcoming environment for all fitness levels</li>
+                <li>• Expert trainer guidance</li>
+                <li>• Community-focused approach</li>
+                <li>• Flexible timing to suit your schedule</li>
+              </ul>
+            </div>
+
+            <div className="mt-6 text-center">
+              <button 
+                onClick={() => setShowJourneyModal(false)}
+                className="bg-slate-600 hover:bg-slate-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+              >
+                Got It!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

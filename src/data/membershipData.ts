@@ -4,8 +4,8 @@ export const membershipPlans: MembershipPlan[] = [
   {
     name: 'Basic',
     duration: '1 Month',
-    price: 2999,
-    originalPrice: 3500,
+    price: 699,
+    originalPrice: 999,
     features: [
       'Access to gym equipment',
       'Basic workout guidance',
@@ -17,8 +17,8 @@ export const membershipPlans: MembershipPlan[] = [
   {
     name: 'Premium',
     duration: '3 Months',
-    price: 7999,
-    originalPrice: 10500,
+    price: 1950,
+    originalPrice: 3999,
     popular: true,
     features: [
       'Everything in Basic',
@@ -32,8 +32,8 @@ export const membershipPlans: MembershipPlan[] = [
   {
     name: 'Elite',
     duration: '6 Months',
-    price: 14999,
-    originalPrice: 21000,
+    price: 3599,
+    originalPrice: 5999,
     features: [
       'Everything in Premium',
       '2 personal training sessions/month',
@@ -47,8 +47,8 @@ export const membershipPlans: MembershipPlan[] = [
   {
     name: 'Ultimate',
     duration: '12 Months',
-    price: 24999,
-    originalPrice: 42000,
+    price: 6599,
+    originalPrice: 11999,
     features: [
       'Everything in Elite',
       'Unlimited personal training',

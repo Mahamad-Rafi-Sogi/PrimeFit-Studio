@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Customer, findCustomerByMobile, getCustomerStats, isAdminCustomer } from '../data/customers';
+import { Customer, findActiveCustomerByMobile, getCustomerStats, isAdminCustomer } from '../data/customers';
 
 interface AuthContextType {
   customer: Customer | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   login: (mobile: string) => Promise<boolean>;
+  loginWithCustomer: (customer: Customer) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
   customerStats: ReturnType<typeof getCustomerStats> | null;
@@ -49,7 +50,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const stats = getCustomerStats();
         setCustomerStats(stats);
-        console.log('Customer database loaded:', stats);
       } catch (error) {
         console.error('Error loading customer stats:', error);
       }
@@ -81,19 +81,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (mobile: string): Promise<boolean> => {
     const startTime = performance.now();
-    console.log('Attempting login for mobile:', mobile);
     
     setLoginAttempts(prev => prev + 1);
     
     // Optimized lookup with performance monitoring
-    const foundCustomer = findCustomerByMobile(mobile);
+    const foundCustomer = findActiveCustomerByMobile(mobile);
     
     const endTime = performance.now();
     const lookupTime = endTime - startTime;
     performanceMonitor.addLoginTime(lookupTime);
-    
-    console.log(`Customer lookup took ${lookupTime.toFixed(2)}ms`);
-    console.log(`Average lookup time: ${performanceMonitor.getAverageLoginTime().toFixed(2)}ms`);
     
     if (foundCustomer) {
       setCustomer(foundCustomer);
@@ -104,12 +100,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('primefit_customer', JSON.stringify(foundCustomer));
       localStorage.setItem('primefit_login_time', loginTime.toISOString());
       
-      console.log('Login successful for:', foundCustomer.name);
       return true;
     }
     
-    console.log('Customer not found for mobile:', mobile);
     return false;
+  };
+
+  // New method for direct customer login (after password verification)
+  const loginWithCustomer = async (customer: Customer): Promise<boolean> => {
+    console.log('🔐 AuthContext: Starting loginWithCustomer for:', customer.name);
+    
+    const startTime = performance.now();
+    
+    setLoginAttempts(prev => prev + 1);
+    
+    const endTime = performance.now();
+    const lookupTime = endTime - startTime;
+    performanceMonitor.addLoginTime(lookupTime);
+    
+    try {
+      setCustomer(customer);
+      const loginTime = new Date();
+      setLastLoginTime(loginTime);
+      
+      // Cache user session
+      localStorage.setItem('primefit_customer', JSON.stringify(customer));
+      localStorage.setItem('primefit_login_time', loginTime.toISOString());
+      
+      console.log('✅ AuthContext: Login successful, customer set:', customer.name);
+      return true;
+    } catch (error) {
+      console.error('❌ AuthContext: Error during loginWithCustomer:', error);
+      return false;
+    }
   };
 
   const logout = () => {
@@ -125,6 +148,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated: !!customer,
     isAdmin: isAdminCustomer(customer),
     login,
+    loginWithCustomer,
     logout,
     isLoading,
     customerStats,

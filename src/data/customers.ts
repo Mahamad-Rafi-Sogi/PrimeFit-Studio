@@ -1,8 +1,9 @@
-// Customer database - Add your 300 gym members here
+// Customer database with persistent storage
 export interface Customer {
   id: string;
   name: string;
   mobile: string;
+  password: string; // Added password field for authentication
   membershipType: 'Basic' | 'Premium' | 'VIP';
   gender: 'Male' | 'Female' | 'Other';
   joinDate: string;
@@ -10,12 +11,18 @@ export interface Customer {
   isAdmin?: boolean; // Admin flag for special privileges
 }
 
-// Sample customer data - Extended to 500+ customers for scalability testing
-export const customers: Customer[] = [
+// Local Storage configuration
+const CUSTOMERS_STORAGE_KEY = 'gym_customers_data';
+const STORAGE_VERSION_KEY = 'gym_customers_version';
+const CURRENT_VERSION = '1.1'; // Bumped version to force reset
+
+// Default customer data - reduced to essential customers only
+const defaultCustomers: Customer[] = [
   {
     id: 'ADMIN001',
     name: 'Admin',
     mobile: '7975832709',
+    password: 'admin123',
     membershipType: 'VIP',
     gender: 'Male',
     joinDate: '2024-01-01',
@@ -26,6 +33,7 @@ export const customers: Customer[] = [
     id: 'PFS001',
     name: 'Ravi Kumar',
     mobile: '9876543210',
+    password: 'ravi123',
     membershipType: 'Premium',
     gender: 'Male',
     joinDate: '2024-01-15',
@@ -35,6 +43,7 @@ export const customers: Customer[] = [
     id: 'PFS002',
     name: 'Priya Sharma',
     mobile: '8765432109',
+    password: 'priya123',
     membershipType: 'Basic',
     gender: 'Female',
     joinDate: '2024-02-20',
@@ -44,6 +53,7 @@ export const customers: Customer[] = [
     id: 'PFS003',
     name: 'Arjun Reddy',
     mobile: '7654321098',
+    password: 'arjun123',
     membershipType: 'VIP',
     gender: 'Male',
     joinDate: '2024-03-10',
@@ -53,86 +63,128 @@ export const customers: Customer[] = [
     id: 'PFS004',
     name: 'Sneha Patel',
     mobile: '6543210987',
+    password: 'sneha123',
     membershipType: 'Premium',
     gender: 'Female',
     joinDate: '2024-01-25',
-    isActive: true
-  },
-  {
-    id: 'PFS005',
-    name: 'Vikram Singh',
-    mobile: '5432109876',
-    membershipType: 'Basic',
-    gender: 'Male',
-    joinDate: '2024-04-05',
-    isActive: true
-  },
-  // Auto-generated customers for scale testing (500 total)
-  ...generateCustomers(495)
+    isActive: false
+  }
 ];
 
-// Function to generate sample customers for testing scalability
-function generateCustomers(count: number): Customer[] {
-  const firstNames = ['Aarav', 'Vivaan', 'Aditya', 'Vihaan', 'Arjun', 'Sai', 'Reyansh', 'Ayaan', 'Krishna', 'Ishaan', 
-                     'Ananya', 'Aadhya', 'Anika', 'Diya', 'Ira', 'Kavya', 'Kiara', 'Myra', 'Navya', 'Pihu'];
-  const lastNames = ['Sharma', 'Verma', 'Gupta', 'Kumar', 'Singh', 'Patel', 'Agarwal', 'Jain', 'Bansal', 'Agrawal',
-                    'Chopra', 'Malhotra', 'Kapoor', 'Arora', 'Mittal', 'Goel', 'Saxena', 'Joshi', 'Yadav', 'Reddy'];
-  const membershipTypes: ('Basic' | 'Premium' | 'VIP')[] = ['Basic', 'Premium', 'VIP'];
-  const genders: ('Male' | 'Female' | 'Other')[] = ['Male', 'Female', 'Other'];
-  
-  const customers: Customer[] = [];
-  
-  for (let i = 0; i < count; i++) {
-    const customerNumber = String(i + 6).padStart(3, '0');
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-    const membershipType = membershipTypes[Math.floor(Math.random() * membershipTypes.length)];
-    const gender = genders[Math.floor(Math.random() * genders.length)];
-    
-    // Generate unique mobile numbers starting from 6000000000
-    const mobile = `${6000000000 + i}`;
-    
-    // Random join date in 2024
-    const month = Math.floor(Math.random() * 12) + 1;
-    const day = Math.floor(Math.random() * 28) + 1;
-    const joinDate = `2024-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-    
-    // 95% active customers
-    const isActive = Math.random() > 0.05;
-    
-    customers.push({
-      id: `PFS${customerNumber}`,
-      name: `${firstName} ${lastName}`,
-      mobile,
-      membershipType,
-      gender,
-      joinDate,
-      isActive
-    });
-  }
-  
-  return customers;
-}
+// Runtime customer data - loaded from storage or defaults
+let customers: Customer[] = [];
 
-// Create an indexed map for O(1) lookups - optimized for 500+ customers
-const customerMobileIndex = new Map<string, Customer>();
-
-// Initialize the index
-const initializeCustomerIndex = () => {
-  customerMobileIndex.clear();
-  customers.forEach(customer => {
-    if (customer.isActive) {
-      customerMobileIndex.set(customer.mobile, customer);
+// Initialize storage and load data
+const initializeStorage = (): void => {
+  try {
+    // Check if localStorage is available
+    if (typeof localStorage === 'undefined') {
+      console.warn('localStorage not available, using in-memory storage');
+      customers = [...defaultCustomers];
+      return;
     }
-  });
+
+    const storedVersion = localStorage.getItem(STORAGE_VERSION_KEY);
+    const storedData = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
+    
+    // If no data or version mismatch, use default data
+    if (!storedData || storedVersion !== CURRENT_VERSION) {
+      customers = [...defaultCustomers];
+      saveToStorage();
+      localStorage.setItem(STORAGE_VERSION_KEY, CURRENT_VERSION);
+      return;
+    }
+    
+    // Parse and load existing data
+    const parsed = JSON.parse(storedData);
+    if (Array.isArray(parsed)) {
+      customers = parsed;
+      
+      // CRITICAL: Ensure admin user always exists
+      const adminExists = customers.find(c => c.mobile === '7975832709' && c.isAdmin);
+      if (!adminExists) {
+        console.warn('⚠️ Admin user missing! Adding admin user...');
+        const adminUser = {
+          id: 'ADMIN001',
+          name: 'Admin',
+          mobile: '7975832709',
+          password: 'admin123',
+          membershipType: 'VIP' as const,
+          gender: 'Male' as const,
+          joinDate: '2024-01-01',
+          isActive: true,
+          isAdmin: true
+        };
+        customers.unshift(adminUser); // Add at beginning
+        saveToStorage();
+      }
+    } else {
+      throw new Error('Invalid data format - not an array');
+    }
+  } catch (error) {
+    console.error('❌ Error loading customer data:', error);
+    customers = [...defaultCustomers];
+    try {
+      saveToStorage();
+    } catch (saveError) {
+      console.error('❌ Error saving default data:', saveError);
+    }
+  }
+};
+
+// Save customers to localStorage
+const saveToStorage = (): void => {
+  try {
+    if (typeof localStorage === 'undefined') {
+      console.warn('localStorage not available, cannot save data');
+      return;
+    }
+    
+    localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(customers));
+  } catch (error) {
+    console.error('❌ Error saving customers to storage:', error);
+    // Don't show alert during initialization to avoid blocking the app
+    if (error instanceof Error && error.message.includes('QuotaExceededError')) {
+      console.error('💽 Storage quota exceeded');
+    }
+  }
 };
 
 // Initialize on module load
-initializeCustomerIndex();
+if (typeof window !== 'undefined') {
+  try {
+    initializeStorage();
+  } catch (error) {
+    console.error('❌ Critical error during customer data initialization:', error);
+    // Set fallback data to prevent complete failure
+    customers = [
+      {
+        id: 'ADMIN001',
+        name: 'Admin',
+        mobile: '7975832709',
+        password: 'admin123',
+        membershipType: 'VIP',
+        gender: 'Male',
+        joinDate: '2024-01-01',
+        isActive: true,
+        isAdmin: true
+      }
+    ];
+  }
+} else {
+  console.log('🖥️ Running in non-browser environment (SSR)');
+}
 
-// Optimized helper function to find customer by mobile number - O(1) lookup
+// Customer management functions with persistence
+
+// Optimized helper function to find customer by mobile number
 export const findCustomerByMobile = (mobile: string): Customer | undefined => {
-  return customerMobileIndex.get(mobile);
+  return customers.find(customer => customer.mobile === mobile);
+};
+
+// Helper function to find active customer by mobile (for old compatibility)
+export const findActiveCustomerByMobile = (mobile: string): Customer | undefined => {
+  return customers.find(customer => customer.mobile === mobile && customer.isActive);
 };
 
 // Helper function to validate mobile number format
@@ -151,9 +203,7 @@ export const getCustomerStats = () => {
   const totalCustomers = customers.length;
   const activeCustomers = customers.filter(c => c.isActive).length;
   const membershipStats = customers.reduce((acc, customer) => {
-    if (customer.isActive) {
-      acc[customer.membershipType] = (acc[customer.membershipType] || 0) + 1;
-    }
+    acc[customer.membershipType] = (acc[customer.membershipType] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
@@ -161,160 +211,213 @@ export const getCustomerStats = () => {
     total: totalCustomers,
     active: activeCustomers,
     inactive: totalCustomers - activeCustomers,
-    membershipBreakdown: membershipStats
+    byMembership: membershipStats
   };
 };
 
-// Helper function to refresh the index (call this if customers data changes)
-export const refreshCustomerIndex = () => {
-  initializeCustomerIndex();
-};
-
-// **REAL** Customer Management Functions - Actually modify the data
-export const addCustomer = (customerData: Omit<Customer, 'id'>): Customer => {
-  // Generate new ID
+// Generate next customer ID
+const generateNextId = (): string => {
   const existingIds = customers.map(c => parseInt(c.id.replace('PFS', '')) || 0);
   const maxId = Math.max(...existingIds, 0);
-  const newId = `PFS${String(maxId + 1).padStart(3, '0')}`;
-  
-  // Create new customer
+  return `PFS${String(maxId + 1).padStart(3, '0')}`;
+};
+
+// Add a new customer with persistence
+export const addCustomer = (customerData: Omit<Customer, 'id'>): Customer => {
   const newCustomer: Customer = {
-    id: newId,
+    id: generateNextId(),
     ...customerData
   };
-  
-  // Add to customers array
+
   customers.push(newCustomer);
-  
-  // Update the index
-  if (newCustomer.isActive) {
-    customerMobileIndex.set(newCustomer.mobile, newCustomer);
-  }
-  
-  console.log(`✅ Added customer: ${newCustomer.name} (${newCustomer.id})`);
+  saveToStorage();
+  console.log(`Added customer: ${newCustomer.name} (${newCustomer.id})`);
   return newCustomer;
 };
 
+// Delete a customer with persistence
 export const deleteCustomer = (customerId: string): boolean => {
   const customerIndex = customers.findIndex(c => c.id === customerId);
   
   if (customerIndex === -1) {
-    console.log(`❌ Customer not found: ${customerId}`);
+    console.error(`Customer not found: ${customerId}`);
     return false;
   }
-  
+
+  // Don't allow deletion of admin user
   const customer = customers[customerIndex];
-  
-  // Remove from customers array
+  if (customer.isAdmin) {
+    console.error('Cannot delete admin user');
+    return false;
+  }
+
   customers.splice(customerIndex, 1);
-  
-  // Remove from index
-  customerMobileIndex.delete(customer.mobile);
-  
-  console.log(`🗑️ Deleted customer: ${customer.name} (${customer.id})`);
+  saveToStorage();
+  console.log(`Deleted customer: ${customer.name} (${customerId})`);
   return true;
 };
 
+// Update a customer with persistence
 export const updateCustomer = (customerId: string, updates: Partial<Omit<Customer, 'id'>>): Customer | null => {
   const customerIndex = customers.findIndex(c => c.id === customerId);
   
   if (customerIndex === -1) {
-    console.log(`❌ Customer not found: ${customerId}`);
+    console.error(`Customer not found: ${customerId}`);
     return null;
   }
-  
+
   const oldCustomer = customers[customerIndex];
-  const updatedCustomer = { ...oldCustomer, ...updates };
   
-  // Update in customers array
-  customers[customerIndex] = updatedCustomer;
-  
-  // Update index if mobile changed or status changed
-  if (oldCustomer.mobile !== updatedCustomer.mobile || oldCustomer.isActive !== updatedCustomer.isActive) {
-    // Remove old entry
-    customerMobileIndex.delete(oldCustomer.mobile);
-    
-    // Add new entry if active
-    if (updatedCustomer.isActive) {
-      customerMobileIndex.set(updatedCustomer.mobile, updatedCustomer);
-    }
+  // Don't allow removing admin privileges from admin user
+  if (oldCustomer.isAdmin && updates.isAdmin === false) {
+    console.error('Cannot remove admin privileges from admin user');
+    return null;
   }
-  
-  console.log(`✏️ Updated customer: ${updatedCustomer.name} (${updatedCustomer.id})`);
+
+  const updatedCustomer = { ...oldCustomer, ...updates };
+  customers[customerIndex] = updatedCustomer;
+  saveToStorage();
+  console.log(`Updated customer: ${updatedCustomer.name} (${customerId})`);
   return updatedCustomer;
 };
 
-export const getAllCustomers = (): Customer[] => {
-  return [...customers]; // Return a copy to prevent direct mutation
-};
-
-export const searchCustomers = (query: string): Customer[] => {
-  const lowerQuery = query.toLowerCase();
-  return customers.filter(customer => 
-    customer.name.toLowerCase().includes(lowerQuery) ||
-    customer.mobile.includes(query) ||
-    customer.id.toLowerCase().includes(lowerQuery)
-  );
-};
-
-// Filter customers by various criteria
+// Search and filter customers
 export const filterCustomers = (filters: {
-  gender?: 'Male' | 'Female' | 'Other' | 'All';
-  membershipType?: 'Basic' | 'Premium' | 'VIP' | 'All';
-  isActive?: boolean | 'All';
   searchQuery?: string;
-}): Customer[] => {
-  let filteredCustomers = [...customers];
+  gender?: 'All' | 'Male' | 'Female' | 'Other';
+  membershipType?: 'All' | 'Basic' | 'Premium' | 'VIP';
+  isActive?: 'All' | boolean;
+}) => {
+  let filtered = [...customers];
 
-  // Apply search query filter
-  if (filters.searchQuery && filters.searchQuery.trim()) {
-    const lowerQuery = filters.searchQuery.toLowerCase();
-    filteredCustomers = filteredCustomers.filter(customer => 
-      customer.name.toLowerCase().includes(lowerQuery) ||
-      customer.mobile.includes(filters.searchQuery!) ||
-      customer.id.toLowerCase().includes(lowerQuery)
+  // Search by name or mobile
+  if (filters.searchQuery) {
+    const query = filters.searchQuery.toLowerCase();
+    filtered = filtered.filter(customer =>
+      customer.name.toLowerCase().includes(query) ||
+      customer.mobile.includes(query)
     );
   }
 
-  // Apply gender filter
+  // Filter by gender
   if (filters.gender && filters.gender !== 'All') {
-    filteredCustomers = filteredCustomers.filter(customer => customer.gender === filters.gender);
+    filtered = filtered.filter(customer => customer.gender === filters.gender);
   }
 
-  // Apply membership type filter
+  // Filter by membership type
   if (filters.membershipType && filters.membershipType !== 'All') {
-    filteredCustomers = filteredCustomers.filter(customer => customer.membershipType === filters.membershipType);
+    filtered = filtered.filter(customer => customer.membershipType === filters.membershipType);
   }
 
-  // Apply active status filter
+  // Filter by active status
   if (filters.isActive !== undefined && filters.isActive !== 'All') {
-    filteredCustomers = filteredCustomers.filter(customer => customer.isActive === filters.isActive);
+    filtered = filtered.filter(customer => customer.isActive === filters.isActive);
   }
 
-  return filteredCustomers;
+  return filtered;
 };
 
-// Get customer statistics including gender breakdown
-export const getCustomerStatistics = () => {
-  const total = customers.length;
-  const active = customers.filter(c => c.isActive).length;
-  const inactive = total - active;
-  
-  const membershipBreakdown = customers.reduce((acc, customer) => {
-    acc[customer.membershipType] = (acc[customer.membershipType] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+// Get all customers (copy to prevent mutation)
+export const getAllCustomers = (): Customer[] => {
+  return [...customers];
+};
 
-  const genderBreakdown = customers.reduce((acc, customer) => {
-    acc[customer.gender] = (acc[customer.gender] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+// Data export/import functions for admin backup/restore
 
-  return {
-    total,
-    active,
-    inactive,
-    membershipBreakdown,
-    genderBreakdown
+// Export customer data as JSON
+export const exportCustomerData = (): string => {
+  const exportData = {
+    version: CURRENT_VERSION,
+    timestamp: new Date().toISOString(),
+    customers: customers,
+    stats: getCustomerStats()
   };
+  return JSON.stringify(exportData, null, 2);
+};
+
+// Import customer data from JSON
+export const importCustomerData = (jsonData: string): { success: boolean; message: string; imported?: number } => {
+  try {
+    const importData = JSON.parse(jsonData);
+    
+    // Validate import data structure
+    if (!importData.customers || !Array.isArray(importData.customers)) {
+      return { success: false, message: 'Invalid data format: missing customers array' };
+    }
+
+    // Validate customer data structure
+    const validCustomers = importData.customers.filter((customer: any) => {
+      return customer.id && customer.name && customer.mobile && 
+             customer.membershipType && customer.gender && customer.joinDate;
+    });
+
+    if (validCustomers.length !== importData.customers.length) {
+      return { 
+        success: false, 
+        message: `Invalid customer data found. Expected ${importData.customers.length}, got ${validCustomers.length} valid customers.` 
+      };
+    }
+
+    // Replace current data
+    customers = validCustomers;
+    saveToStorage();
+    
+    return { 
+      success: true, 
+      message: `Successfully imported ${validCustomers.length} customers`, 
+      imported: validCustomers.length 
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      message: `Import failed: ${error instanceof Error ? error.message : 'Unknown error'}` 
+    };
+  }
+};
+
+// Reset to default customer data
+export const resetToDefaultData = (): void => {
+  customers = [...defaultCustomers];
+  saveToStorage();
+  console.log('Reset customer data to defaults');
+};
+
+// Clear all customer data (admin only, keep admin user)
+export const clearAllCustomerData = (): void => {
+  customers = customers.filter(c => c.isAdmin);
+  saveToStorage();
+  console.log('Cleared all non-admin customer data');
+};
+
+// Debug function to check and fix customer data
+export const debugCustomerData = () => {
+  console.log('🔍 Debug: Current customers:', customers);
+  
+  // Check for customers without passwords
+  const customersWithoutPassword = customers.filter(c => !c.password);
+  if (customersWithoutPassword.length > 0) {
+    console.warn('⚠️ Found customers without passwords:', customersWithoutPassword);
+    
+    // Fix customers without passwords
+    customersWithoutPassword.forEach(customer => {
+      if (customer.mobile === '7975832709') {
+        customer.password = 'admin123';
+      } else if (customer.mobile === '9876543210') {
+        customer.password = 'ravi123';
+      } else if (customer.mobile === '8765432109') {
+        customer.password = 'priya123';
+      } else if (customer.mobile === '7654321098') {
+        customer.password = 'arjun123';
+      } else if (customer.mobile === '6543210987') {
+        customer.password = 'sneha123';
+      } else {
+        customer.password = 'default123';
+      }
+    });
+    
+    saveToStorage();
+    console.log('✅ Fixed customers without passwords');
+  }
+  
+  return customers;
 };
