@@ -14,7 +14,7 @@ export interface Customer {
 // Local Storage configuration
 const CUSTOMERS_STORAGE_KEY = 'gym_customers_data';
 const STORAGE_VERSION_KEY = 'gym_customers_version';
-const CURRENT_VERSION = '1.1'; // Bumped version to force reset
+const CURRENT_VERSION = '1.3'; // Bumped version to force reload of updated customer data
 
 // Default customer data - reduced to essential customers only
 const defaultCustomers: Customer[] = [
@@ -31,9 +31,9 @@ const defaultCustomers: Customer[] = [
   },
   {
     id: 'PFS001',
-    name: 'Ravi Kumar',
-    mobile: '9876543210',
-    password: 'ravi123',
+    name: 'Mahamad Rafi Sogi',
+    mobile: '7829171921',
+    password: 'rafi123',
     membershipType: 'Premium',
     gender: 'Male',
     joinDate: '2024-01-15',
@@ -41,9 +41,9 @@ const defaultCustomers: Customer[] = [
   },
   {
     id: 'PFS002',
-    name: 'Priya Sharma',
-    mobile: '8765432109',
-    password: 'priya123',
+    name: 'Prashanth U',
+    mobile: '7996697196',
+    password: 'prash123',
     membershipType: 'Basic',
     gender: 'Female',
     joinDate: '2024-02-20',
@@ -51,9 +51,9 @@ const defaultCustomers: Customer[] = [
   },
   {
     id: 'PFS003',
-    name: 'Arjun Reddy',
-    mobile: '7654321098',
-    password: 'arjun123',
+    name: 'Mallikarjuna GR',
+    mobile: '9741506716',
+    password: 'malli123',
     membershipType: 'VIP',
     gender: 'Male',
     joinDate: '2024-03-10',
@@ -61,11 +61,11 @@ const defaultCustomers: Customer[] = [
   },
   {
     id: 'PFS004',
-    name: 'Sneha Patel',
-    mobile: '6543210987',
-    password: 'sneha123',
+    name: 'Shabbir Bashar',
+    mobile: '7760570036',
+    password: 'shab123',
     membershipType: 'Premium',
-    gender: 'Female',
+    gender: 'Male',
     joinDate: '2024-01-25',
     isActive: false
   }
@@ -196,6 +196,51 @@ export const isValidMobile = (mobile: string): boolean => {
 // Helper function to check if customer is admin
 export const isAdminCustomer = (customer: Customer | null): boolean => {
   return customer?.isAdmin === true;
+};
+
+// Force reload customer data from defaults (useful when source data changes)
+export const forceReloadCustomerData = (): void => {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(CUSTOMERS_STORAGE_KEY);
+      localStorage.removeItem(STORAGE_VERSION_KEY);
+      console.log('🔄 Customer data cache cleared');
+    }
+    customers = [...defaultCustomers];
+    saveToStorage();
+    localStorage.setItem(STORAGE_VERSION_KEY, CURRENT_VERSION);
+    console.log('✅ Customer data reloaded from source');
+  } catch (error) {
+    console.error('❌ Error reloading customer data:', error);
+  }
+};
+
+// Clear customer data cache (useful for logout scenarios)
+export const clearCustomerDataCache = (): void => {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(CUSTOMERS_STORAGE_KEY);
+      localStorage.removeItem(STORAGE_VERSION_KEY);
+      console.log('🧹 Customer data cache cleared for security');
+    }
+    // Reset to default data but don't save to localStorage yet
+    customers = [...defaultCustomers];
+    console.log('🔄 Customer data reset to defaults (will be saved on next app load)');
+  } catch (error) {
+    console.error('❌ Error clearing customer data cache:', error);
+  }
+};
+
+// Check if customer data is cached
+export const isCustomerDataCached = (): boolean => {
+  try {
+    if (typeof localStorage === 'undefined') return false;
+    const storedData = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
+    const storedVersion = localStorage.getItem(STORAGE_VERSION_KEY);
+    return !!(storedData && storedVersion === CURRENT_VERSION);
+  } catch (error) {
+    return false;
+  }
 };
 
 // Helper function to get customer statistics

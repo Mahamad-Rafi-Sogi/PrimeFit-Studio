@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Dumbbell, LogOut, Shield, Bell } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(3);
   const location = useLocation();
+  const navigate = useNavigate();
   const { customer, logout, isAdmin } = useAuth();
 
   const navItems = [
@@ -20,34 +22,55 @@ const Navigation: React.FC = () => {
   ];
 
   const scrollToDeveloper = () => {
-    // First navigate to home page if not already there
+    // If not on home page, navigate to home and then scroll
     if (location.pathname !== '/') {
-      window.location.href = '/#developer';
+      navigate('/', { replace: true });
+      // Use a longer delay to ensure the home page is fully loaded
+      setTimeout(() => {
+        const developerSection = document.getElementById('developer-section');
+        if (developerSection) {
+          developerSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start' 
+          });
+        }
+      }, 300);
       return;
     }
     
-    // Scroll to developer section
-    const developerSection = document.getElementById('developer-section');
-    if (developerSection) {
-      developerSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start' 
-      });
-    }
+    // Already on home page, just scroll to developer section
+    setTimeout(() => {
+      const developerSection = document.getElementById('developer-section');
+      if (developerSection) {
+        developerSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start' 
+        });
+      }
+    }, 100);
   };
 
   const scrollToPayment = () => {
     // Close mobile menu if open
     setIsMenuOpen(false);
     
-    // First navigate to home page if not already there
+    // If not on home page, navigate to home and then scroll
     if (location.pathname !== '/') {
-      // Use window.location.href to ensure page loads first, then scroll
-      window.location.href = '/#payment';
+      navigate('/', { replace: true });
+      // Use a longer delay to ensure the home page is fully loaded
+      setTimeout(() => {
+        const paymentSection = document.getElementById('payment-section');
+        if (paymentSection) {
+          paymentSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start' 
+          });
+        }
+      }, 300);
       return;
     }
     
-    // Small delay to ensure DOM is ready, then scroll to payment section
+    // Already on home page, just scroll to payment section
     setTimeout(() => {
       const paymentSection = document.getElementById('payment-section');
       if (paymentSection) {
@@ -55,8 +78,44 @@ const Navigation: React.FC = () => {
           behavior: 'smooth',
           block: 'start' 
         });
+      } else {
+        // If payment section not found, try scrolling to bottom
+        window.scrollTo({ 
+          top: document.body.scrollHeight, 
+          behavior: 'smooth' 
+        });
       }
     }, 100);
+  };
+
+  const handleNavigation = (path: string, itemName: string) => {
+    // Close mobile menu
+    setIsMenuOpen(false);
+    
+    // Handle special cases
+    if (itemName === 'Notifications') {
+      // Clear notification count when notifications are clicked
+      setNotificationCount(0);
+    }
+    
+    // Navigate to the path
+    navigate(path);
+    
+    // Scroll to top for specific pages that should always start fresh
+    if (itemName === 'BMI Calculator') {
+      // BMI Calculator should always start from top
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    }
+    // For other pages, let them remember their scroll position naturally
+    // Payment section has its own scrollToPayment function for scrolling to payment section
+  };
+
+  const handleNotificationClick = () => {
+    setNotificationCount(0);
+    setIsMenuOpen(false);
+    navigate('/notifications');
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -88,17 +147,33 @@ const Navigation: React.FC = () => {
           <div className="hidden lg:block flex-shrink-0">
             <div className="ml-10 flex items-baseline space-x-4">
               {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive(item.path)
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:bg-slate-700 hover:text-white'
-                  }`}
-                >
-                  {item.name}
-                </Link>
+                item.name === 'Notifications' || item.name === 'BMI Calculator' ? (
+                  // Special handling for notifications and BMI Calculator
+                  <button
+                    key={item.name}
+                    onClick={() => handleNavigation(item.path, item.name)}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive(item.path)
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                ) : (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive(item.path)
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
               
               {/* Payment Button */}
@@ -118,15 +193,17 @@ const Navigation: React.FC = () => {
               </button>
               
               {/* Notification Icon */}
-              <Link
-                to="/notifications"
+              <button
+                onClick={handleNotificationClick}
                 className="relative p-2 rounded-md text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
               >
                 <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  3
-                </span>
-              </Link>
+                {notificationCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {notificationCount}
+                  </span>
+                )}
+              </button>
               
               {/* Logout Button */}
               <button
@@ -142,15 +219,17 @@ const Navigation: React.FC = () => {
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-2">
             {/* Mobile Notification Icon */}
-            <Link
-              to="/notifications"
+            <button
+              onClick={handleNotificationClick}
               className="relative p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 transition-colors"
             >
               <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                3
-              </span>
-            </Link>
+              {notificationCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                  {notificationCount}
+                </span>
+              )}
+            </button>
             
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -170,18 +249,32 @@ const Navigation: React.FC = () => {
           <div className="lg:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-slate-800 rounded-lg mt-2">
               {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    isActive(item.path)
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:bg-slate-700 hover:text-white'
-                  }`}
-                >
-                  {item.name}
-                </Link>
+                item.name === 'Notifications' || item.name === 'BMI Calculator' ? (
+                  <button
+                    key={item.name}
+                    onClick={() => handleNavigation(item.path, item.name)}
+                    className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                      isActive(item.path)
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                ) : (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                      isActive(item.path)
+                        ? 'bg-blue-600 text-white'
+                        : 'text-gray-300 hover:bg-slate-700 hover:text-white'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
               
               {/* Mobile Payment Button */}

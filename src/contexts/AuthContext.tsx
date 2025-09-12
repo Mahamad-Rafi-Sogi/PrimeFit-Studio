@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Customer, findActiveCustomerByMobile, getCustomerStats, isAdminCustomer } from '../data/customers';
+import { Customer, findActiveCustomerByMobile, getCustomerStats, isAdminCustomer, clearCustomerDataCache } from '../data/customers';
 
 interface AuthContextType {
   customer: Customer | null;
@@ -99,6 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Cache user session
       localStorage.setItem('primefit_customer', JSON.stringify(foundCustomer));
       localStorage.setItem('primefit_login_time', loginTime.toISOString());
+      localStorage.setItem('primefit_just_logged_in', 'true'); // Flag for redirect
       
       return true;
     }
@@ -126,6 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Cache user session
       localStorage.setItem('primefit_customer', JSON.stringify(customer));
       localStorage.setItem('primefit_login_time', loginTime.toISOString());
+      localStorage.setItem('primefit_just_logged_in', 'true'); // Flag for redirect
       
       console.log('✅ AuthContext: Login successful, customer set:', customer.name);
       return true;
@@ -138,9 +140,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setCustomer(null);
     setLastLoginTime(null);
+    
+    // Clear auth-related localStorage
     localStorage.removeItem('primefit_customer');
     localStorage.removeItem('primefit_login_time');
-    console.log('User logged out successfully');
+    localStorage.removeItem('primefit_just_logged_in');
+    
+    // Clear customer data cache to ensure fresh data for next login
+    try {
+      clearCustomerDataCache();
+      console.log('✅ User logged out successfully - customer data cache cleared for security');
+    } catch (error) {
+      console.error('❌ Error clearing customer data cache during logout:', error);
+      // Fallback: manually clear cache
+      localStorage.removeItem('gym_customers_data');
+      localStorage.removeItem('gym_customers_version');
+      console.log('🔄 Fallback: Customer data cache manually cleared');
+    }
   };
 
   const value: AuthContextType = {
