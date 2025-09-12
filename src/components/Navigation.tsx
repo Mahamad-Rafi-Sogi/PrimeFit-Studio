@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Dumbbell, LogOut, Shield } from 'lucide-react';
+import { Menu, X, Dumbbell, LogOut, Shield, Bell } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navigation: React.FC = () => {
@@ -37,20 +37,26 @@ const Navigation: React.FC = () => {
   };
 
   const scrollToPayment = () => {
+    // Close mobile menu if open
+    setIsMenuOpen(false);
+    
     // First navigate to home page if not already there
     if (location.pathname !== '/') {
+      // Use window.location.href to ensure page loads first, then scroll
       window.location.href = '/#payment';
       return;
     }
     
-    // Scroll to payment section
-    const paymentSection = document.getElementById('payment-section');
-    if (paymentSection) {
-      paymentSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start' 
-      });
-    }
+    // Small delay to ensure DOM is ready, then scroll to payment section
+    setTimeout(() => {
+      const paymentSection = document.getElementById('payment-section');
+      if (paymentSection) {
+        paymentSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start' 
+        });
+      }
+    }, 100);
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -111,6 +117,17 @@ const Navigation: React.FC = () => {
                 Developer Info
               </button>
               
+              {/* Notification Icon */}
+              <Link
+                to="/notifications"
+                className="relative p-2 rounded-md text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                <Bell className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  3
+                </span>
+              </Link>
+              
               {/* Logout Button */}
               <button
                 onClick={logout}
@@ -123,7 +140,18 @@ const Navigation: React.FC = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden">
+          <div className="lg:hidden flex items-center space-x-2">
+            {/* Mobile Notification Icon */}
+            <Link
+              to="/notifications"
+              className="relative p-2 rounded-md text-gray-400 hover:text-white hover:bg-slate-700 transition-colors"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                3
+              </span>
+            </Link>
+            
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-400 hover:text-white hover:bg-slate-700 p-2 rounded-md transition-colors"

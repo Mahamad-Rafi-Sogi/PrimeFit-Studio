@@ -48,22 +48,23 @@ const Gallery: React.FC = () => {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex justify-center mb-12">
-          <div className="bg-slate-800 rounded-lg p-1 flex space-x-1">
+        <div className="flex justify-center mb-12 overflow-x-auto">
+          <div className="bg-slate-800 rounded-lg p-1 flex space-x-1 min-w-max">
             {categories.map((category) => {
               const IconComponent = category.icon;
               return (
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`flex items-center px-6 py-3 rounded-md font-semibold transition-all ${
+                  className={`flex items-center px-4 sm:px-6 py-3 rounded-md font-semibold transition-all text-sm sm:text-base whitespace-nowrap ${
                     selectedCategory === category.id
                       ? 'bg-blue-600 text-white shadow-lg'
                       : 'text-gray-400 hover:text-white hover:bg-slate-700'
                   }`}
                 >
                   <IconComponent className="h-4 w-4 mr-2" />
-                  {category.name}
+                  <span className="hidden sm:inline">{category.name}</span>
+                  <span className="sm:hidden">{category.name.split(' ')[0]}</span>
                 </button>
               );
             })}
@@ -71,7 +72,7 @@ const Gallery: React.FC = () => {
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {galleryItems[selectedCategory as keyof typeof galleryItems].map((item, index) => (
             <div key={index} className="group relative bg-slate-800 rounded-xl overflow-hidden hover:shadow-xl transition-all transform hover:scale-105">
               <div className="aspect-video relative overflow-hidden">

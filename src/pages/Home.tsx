@@ -254,39 +254,69 @@ const Home: React.FC = () => {
       </section>
 
       {/* Payment Section */}
-      <section id="payment-section" className="py-16 bg-slate-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-xl p-8">
-            <div className="mb-6">
+      <section id="payment-section" className="py-20 bg-slate-800">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-xl p-6 sm:p-8">
+            <div className="text-center mb-8">
               <CreditCard className="h-12 w-12 text-white mx-auto mb-4" />
-              <h2 className="text-3xl font-bold text-white mb-4">Quick & Easy Payments</h2>
-              <p className="text-gray-100 text-lg">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Quick & Easy Payments</h2>
+              <p className="text-gray-100 text-base sm:text-lg">
                 Pay your membership fees instantly using UPI. Quick, secure, and hassle-free!
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6">
-              <h3 className="text-xl font-semibold text-white mb-4">Pay with UPI</h3>
-              <div className="flex justify-center">
-                <a 
-                  href="upi://pay?pa=primefitstudio@paytm&pn=PrimeFit%20Studio&mc=7299&tr=PRIMEFIT001&tn=Membership%20Payment%20-%20PrimeFit%20Studio&am=&cu=INR"
-                  className="bg-white hover:bg-gray-100 text-green-600 px-8 py-4 rounded-lg font-semibold transition-colors flex items-center text-lg"
-                >
-                  💳 Pay Now with UPI
-                </a>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-white mb-6 text-center">Pay with UPI</h3>
+              <div className="flex flex-col space-y-4">
+                {/* UPI Payment Button */}
+                <div className="text-center">
+                  <a 
+                    href="upi://pay?pa=primefitstudio@paytm&pn=PrimeFit%20Studio&mc=7299&tr=PRIMEFIT001&tn=Membership%20Payment%20-%20PrimeFit%20Studio&am=&cu=INR"
+                    className="inline-block bg-white hover:bg-gray-100 text-green-600 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold transition-colors text-base sm:text-lg w-full sm:w-auto"
+                  >
+                    💳 Pay Now with UPI
+                  </a>
+                </div>
+
+                {/* UPI ID Display */}
+                <div className="bg-white/20 rounded-lg p-4 text-center">
+                  <p className="text-white text-sm mb-2">UPI ID:</p>
+                  <p className="text-yellow-300 font-mono text-lg font-semibold">primefitstudio@paytm</p>
+                  <button 
+                    onClick={() => navigator.clipboard.writeText('primefitstudio@paytm')}
+                    className="text-blue-200 hover:text-blue-100 text-sm mt-2 underline"
+                  >
+                    📋 Copy UPI ID
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div className="text-white text-sm space-y-2">
-              <p>✅ Secure payments through your UPI app</p>
-              <p>✅ Instant payment confirmation</p>
-              <p>✅ No additional charges</p>
-              <p className="text-gray-200 mt-4">
-                <strong>Note:</strong> After payment, please share the transaction screenshot with us on WhatsApp: 
-                <a href="https://wa.me/917975832709" className="text-yellow-300 hover:text-yellow-200 ml-1">
-                  +91 7975832709
-                </a>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div className="text-center text-white">
+                <div className="text-2xl mb-2">✅</div>
+                <p className="text-sm">Secure payments through your UPI app</p>
+              </div>
+              <div className="text-center text-white">
+                <div className="text-2xl mb-2">⚡</div>
+                <p className="text-sm">Instant payment confirmation</p>
+              </div>
+              <div className="text-center text-white">
+                <div className="text-2xl mb-2">💰</div>
+                <p className="text-sm">No additional charges</p>
+              </div>
+            </div>
+
+            <div className="bg-yellow-500/20 rounded-lg p-4 text-center">
+              <p className="text-white text-sm sm:text-base">
+                <strong>📱 After Payment:</strong> Please share the transaction screenshot with us on WhatsApp
               </p>
+              <a 
+                href="https://wa.me/917975832709" 
+                className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors mt-3"
+              >
+                💬 WhatsApp: +91 7975832709
+              </a>
             </div>
           </div>
         </div>
