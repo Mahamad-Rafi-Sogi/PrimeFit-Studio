@@ -29,7 +29,9 @@ import {
   Download,
   Upload,
   RefreshCw,
-  AlertTriangle
+  AlertTriangle,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 const CustomerManagement: React.FC = () => {
@@ -48,6 +50,10 @@ const CustomerManagement: React.FC = () => {
   const [genderFilter, setGenderFilter] = useState<'All' | 'Male' | 'Female' | 'Other'>('All');
   const [membershipFilter, setMembershipFilter] = useState<'All' | 'Basic' | 'Premium' | 'VIP'>('All');
   const [activeFilter, setActiveFilter] = useState<'All' | boolean>('All');
+
+  // Password visibility states
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showEditPassword, setShowEditPassword] = useState(false);
 
   // Form states for new customer
   const [newCustomer, setNewCustomer] = useState({
@@ -621,13 +627,26 @@ const CustomerManagement: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
-                <input
-                  type="password"
-                  value={newCustomer.password}
-                  onChange={(e) => setNewCustomer({...newCustomer, password: e.target.value})}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter password"
-                />
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    value={newCustomer.password}
+                    onChange={(e) => setNewCustomer({...newCustomer, password: e.target.value})}
+                    className="w-full p-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showNewPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -737,13 +756,26 @@ const CustomerManagement: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
-                <input
-                  type="password"
-                  value={editingCustomer.password}
-                  onChange={(e) => setEditingCustomer({...editingCustomer, password: e.target.value})}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter password"
-                />
+                <div className="relative">
+                  <input
+                    type={showEditPassword ? "text" : "password"}
+                    value={editingCustomer.password}
+                    onChange={(e) => setEditingCustomer({...editingCustomer, password: e.target.value})}
+                    className="w-full p-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowEditPassword(!showEditPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showEditPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div>
